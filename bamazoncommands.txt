@@ -1,0 +1,56 @@
+CREATE DATABASE bamazon_db;
+show databases;
+use bamazon_db;
+
+CREATE TABLE departments(
+	id INTEGER(11) AUTO_INCREMENT NOT NULL UNIQUE, 
+	department_name VARCHAR(50), 
+	over_head_cost DECIMAL(5,2), 
+	PRIMARY KEY(id) 
+);
+
+CREATE TABLE products(
+	id INTEGER(11) AUTO_INCREMENT NOT NULL UNIQUE, 
+	product_name VARCHAR(50),
+	department_id INTEGER(11), 
+	price DECIMAL(5,2), 
+	stock_quantity INTEGER(11) DEFAULT 5, 
+	PRIMARY KEY(id), 
+	FOREIGN KEY(department_id) references departments(id) 
+);
+
+CREATE TABLE sales(
+	id INTEGER(11) AUTO_INCREMENT NOT NULL UNIQUE, 
+	product_id INTEGER(11),  
+	quantity_purchased INTEGER(11) DEFAULT 1, 
+	created_at DATE, 
+	PRIMARY KEY(id), 
+	FOREIGN KEY(product_id) references products(id) 
+);
+
+INSERT INTO departments (department_name, over_head_cost) VALUES ('Anime', 5.00), ('Movies', 2.50), ('Video Games', 3.00), ('Comics', 1.00), ('Music', 1.50);
+select * from departments;
+
+INSERT INTO products (product_name, departmedent_id, price, stock_quantity) VALUES ('Cowboy Bebop: The Complete Series', 1, 66.95, 7), ('Ninja Scroll', 1, 14.96, 3), ('Overlord: The Complete Series', 1, 39.99, 9);
+INSERT INTO products (product_name, department_id, price, stock_quantity) VALUES ('The Big Lebowski', 2, 14.99, 2), ('No Country For Old Men', 2, 12.99, 3);
+INSERT INTO products (product_name, department_id, price, stock_quantity) VALUES ('Tekken 7', 3, 59.99, 7), ('Injustice 2', 2, 59.99, 2);
+INSERT INTO products (product_name, department_id, price, stock_quantity) VALUES ('Saga Book One', 4, 33.74, 10), ('Monstress', 4, 9.99, 3);
+INSERT INTO products (product_name, department_id, price, stock_quantity) VALUES ('Run the Jewels', 5, 19.74, 5);
+select * from products;
+
+SELECT*
+FROM products pro
+LEFT JOIN departments dep
+ON dep.id = pro.department_id
+LEFT JOIN sales
+ON sales.id = pro.product_id
+;
+
+SELECT pro.id, pro.product_name, dep.department_name, pro.price, pro.stock_quantity
+FROM products pro
+LEFT JOIN departments dep
+ON dep.id = pro.department_id
+
+LEFT JOIN sales
+ON sales.id = pro.product_id
+;
