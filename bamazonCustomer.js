@@ -97,12 +97,57 @@ function quantityProducts() {
 						var newstock = parseFloat(currentstock) - parseFloat(myquantity);
 						console.log(newstock+ " left");
 
+						return confirmPurchase();
+
 						// connection.query('INSERT into sales SET ?', {
 						// 	beer_id : data.beer_id,
 						// 	dranker_id : dranker
 						// }, function (error, results, fields) {
 						// 	console.log('insert complete')
 						// });
+		}
+	});
+}
+
+function confirmPurchase(){
+		inquirer.prompt([
+			{type: "confirm",
+			  name: "purchase",
+			  message: "Would Like to confirm your order?"}
+			]).then(function(data){
+				mypurchase= data.purchase;
+				console.log(mypurchase);
+				if(mypurchase){
+					console.log(' ');
+					console.log('---------------------------------------------------------------------');
+					console.log('Your Order is Confirm!');
+					console.log('---------------------------------------------------------------------');
+					console.log(' ');
+					return anotherPurchase();
+				} else {
+					console.log(' ');
+					console.log('---------------------------------------------------------------------');
+					console.log('Back to Products');
+					console.log('---------------------------------------------------------------------');
+					console.log(' ');
+					return viewProducts();
+		}
+	});
+}
+
+function anotherPurchase(){
+		inquirer.prompt([
+			{type: "confirm",
+			  name: "purchaseagain",
+			  message: "Would Like to your Another product?"}
+			]).then(function(data){
+				mypurchaseagain= data.purchaseagain;
+				console.log(mypurchaseagain);
+				if(mypurchase){
+					console.log('Your Order is Confirm!');
+					return viewProducts();
+				} else {
+					console.log('Thank You For Your Service!');
 		}
 	});
 }
