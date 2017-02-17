@@ -23,10 +23,13 @@ CREATE TABLE sales(
 	id INTEGER(11) AUTO_INCREMENT NOT NULL UNIQUE, 
 	product_id INTEGER(11),  
 	quantity_purchased INTEGER(11) DEFAULT 1, 
-	created_at DATE, 
+	created_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP, 
 	PRIMARY KEY(id), 
 	FOREIGN KEY(product_id) references products(id) 
 );
+
+had issue use timestamp not date
+https://dev.mysql.com/doc/refman/5.7/en/timestamp-initialization.html
 
 INSERT INTO departments (department_name, over_head_cost) VALUES ('Anime', 5.00), ('Movies', 2.50), ('Video Games', 3.00), ('Comics', 1.00), ('Music', 1.50);
 select * from departments;
@@ -51,6 +54,12 @@ FROM products pro
 LEFT JOIN departments dep
 ON dep.id = pro.department_id
 
+
+
 LEFT JOIN sales
 ON sales.id = pro.product_id
 ;
+
+Update products set stock_quantity = [newstock] where id = [myproduct];
+
+Insert into sales (product_id, quantity_purchased) values ([myproduct], [myquantity]);

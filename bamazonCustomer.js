@@ -6,6 +6,7 @@ var myproduct;
 var myquantity;
 var currentstock;
 var myprice;
+var newstock;
 
 var connection = mysql.createConnection({
   host     : 'localhost',
@@ -22,7 +23,7 @@ connection.query('SELECT pro.id, pro.product_name, dep.department_name, pro.pric
 		//this show the current products
 		// console.log(results);
 		console.log(' ');
-		console.log('WELCOME TO BAMAZON');
+		console.log('  WELCOME TO BAMAZON');
 		console.log('------------------------------------------------------------------');
 		console.log(' ID |  PRODUCT')
 		if (!error) {
@@ -47,16 +48,16 @@ function buyProducts() {
 	  message: "Select the Item Id of Product you wish to purchase:"}
 	]).then(function(data){
 		myproduct = data.product_id;
-		console.log(myproduct);
+		// console.log(myproduct);
 			if(currentstock == 0){
-				console.log('Were currently out of stock! Please select another product!');
+				console.log('  Were currently out of stock! Please select another product!');
 				return viewProducts();
 			} else {
 
 			connection.query('SELECT * from products where id ='+ myproduct, function (error, results, fields) {
 				// console.log(results);
 				console.log(' ');
-				console.log('You have selected: ');
+				console.log('  You have selected: ');
 				console.log('---------------------------------------------------------------------');
 		    	console.log(" ID: "+results[0].id+" | "+results[0].product_name+" | "+
 		    				 "Price: $"+results[0].price+" | "+ "In Stock: "+results[0].stock_quantity);
@@ -70,8 +71,7 @@ function buyProducts() {
 		}
 	});
 }
-//stop here focus next project 40 https://codingbootcamp.hosted.panopto.com/Panopto/Pages/Viewer.aspx?id=2635f304-cd34-4bef-9cf7-1057b4111082
-//use oldliri samples and rewatched video start a 40
+
 
 function quantityProducts() {
 
@@ -83,28 +83,31 @@ function quantityProducts() {
 
 					// console.log(myproduct);
 					myquantity = data.quantity;
-					console.log(myquantity);
-				//do an insert into mysql 
+					// console.log(myquantity);
+				   //do an insert into mysql 
 					if (myquantity > currentstock) {
-						console.log("Insufficient quantity! Please select the right amount!")
+						console.log(' ');
+						console.log('---------------------------------------------------------------------');
+						console.log("  Insufficient quantity! Please select the right amount!");
+						console.log('---------------------------------------------------------------------');
+						console.log(' ');
 						return quantityProducts();
 					} else {
 						var actualprice = parseFloat(myquantity) * parseFloat(myprice);
 						var totalprice = actualprice.toFixed(2);
-						console.log("Your Total is $" + totalprice);
 
-						//for product update
-						var newstock = parseFloat(currentstock) - parseFloat(myquantity);
-						console.log(newstock+ " left");
+						console.log(' ');
+						console.log('---------------------------------------------------------------------');
+						console.log("  With a quantity of " + myquantity);
+						console.log("  Your Total is $" + totalprice);
+						console.log('---------------------------------------------------------------------');
+						console.log(' ');
+
+						//for product update of stock
+						newstock = parseFloat(currentstock) - parseFloat(myquantity);
+						// console.log(newstock+ " left");
 
 						return confirmPurchase();
-
-						// connection.query('INSERT into sales SET ?', {
-						// 	beer_id : data.beer_id,
-						// 	dranker_id : dranker
-						// }, function (error, results, fields) {
-						// 	console.log('insert complete')
-						// });
 		}
 	});
 }
@@ -116,18 +119,20 @@ function confirmPurchase(){
 			  message: "Would Like to confirm your order?"}
 			]).then(function(data){
 				mypurchase= data.purchase;
-				console.log(mypurchase);
+				// console.log(mypurchase);
 				if(mypurchase){
 					console.log(' ');
 					console.log('---------------------------------------------------------------------');
-					console.log('Your Order is Confirm!');
+					console.log('  Your Order is Completed!');
 					console.log('---------------------------------------------------------------------');
 					console.log(' ');
+					updateProducts(newstock, myproduct);
+					insertIntoSales(myproduct, myquantity);
 					return anotherPurchase();
 				} else {
 					console.log(' ');
 					console.log('---------------------------------------------------------------------');
-					console.log('Back to Products');
+					console.log('  Back to Bamazon Products Lists!');
 					console.log('---------------------------------------------------------------------');
 					console.log(' ');
 					return viewProducts();
@@ -142,68 +147,44 @@ function anotherPurchase(){
 			  message: "Would Like to your Another product?"}
 			]).then(function(data){
 				mypurchaseagain= data.purchaseagain;
-				console.log(mypurchaseagain);
-				if(mypurchase){
-					console.log('Your Order is Confirm!');
+				// console.log(mypurchaseagain);
+				if(mypurchaseagain){
+					console.log(' ');
+					console.log('---------------------------------------------------------------------');
+					console.log('  Back to Bamazon Products Lists!');
+					console.log('---------------------------------------------------------------------');
+					console.log(' ');
 					return viewProducts();
 				} else {
-					console.log('Thank You For Your Service!');
+					console.log(' ');
+					console.log('---------------------------------------------------------------------');
+					console.log('  Thank You For Your Service!');
+					console.log('---------------------------------------------------------------------');
+					console.log(' ');
+					connection.end();
 		}
 	});
 }
 
 //write update function
-function updateProducts(myproduct, myproduct){
-	connection.query("UPDATE " + table + " SET ? WHERE ?", [{
-		name : 'bruno beer'
+//Update products set stock_quantity = [newstock] where id = [myproduct];
+function updateProducts(newstock, myproduct){
+	connection.query("UPDATE products SET ? WHERE ?", [{
+		stock_quantity : newstock
 	  }, {
-	  	id : id
+	  	id : myproduct
 	  }], function(err, res) { 
 	  	if (err) return console.log(err);
-	  	console.log('update completed!')
+	  	// console.log('Update Stock Quantity completed!')
 	  });
 }
 
-// function insertIntoTable(name, type, abv, table){
-//   connection.query("INSERT INTO " + table + " SET ?", {
-//       name: name,
-//       type: type,
-//       abv: abv
-//     }, function(err, res) { console.log('completed!')});
-// }
-
-// function deleteFromTable(id, table){
-// 	connection.query("DELETE FROM " + table + " WHERE ?", {
-// 	    id: id
-// 	  }, function(err, res) { 
-// 	  	if (err) return console.log(err);
-// 	  	console.log('delete completed!')
-// 	  });
-// }
-
-// //write update function
-// function updateTable(id, table){
-// 	connection.query("UPDATE " + table + " SET ? WHERE ?", [{
-// 		name : 'bruno beer'
-// 	  }, {
-// 	  	id : id
-// 	  }], function(err, res) { 
-// 	  	if (err) return console.log(err);
-// 	  	console.log('update completed!')
-// 	  });
-// }
-
-// //write delete function
-
-
-// // insertIntoTable('beer', 'i dont know beer', 100, 'beers');
-// // deleteFromTable(7, 'beers');
-// updateTable(1, 'beers');
-
-
-
-
-
-
-
+function insertIntoSales(myproduct, myquantity){
+  connection.query("INSERT INTO sales SET ?", {
+      product_id: myproduct,
+      quantity_purchased: myquantity
+    }, function(err, res) {
+    	 // console.log('Sales is Completed and Recorded!')
+	});
+}
 
