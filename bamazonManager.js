@@ -21,12 +21,18 @@ var connection = mysql.createConnection({
 connection.connect();
 
 function viewMenuOptions() {
+		console.log(' ');
+		console.log('------------------------------------------------------------------');
+		console.log('  BAMAZON: Manager Menu');
+		console.log('------------------------------------------------------------------');
 	inquirer.prompt([
 		{type: "list",
 	    message: "List a set of menu options:",
 	    choices: ["View Products for Sale", "View Low Inventory", "Add to Inventory", "Add New Product", "QUIT"],
 	    name: "managerchoice"}
 	]).then(function(data) {
+		console.log('==================================================================');
+		console.log(' ');
 
 		var mychoice = data.managerchoice;
 		console.log(mychoice);
@@ -188,6 +194,10 @@ function updateProducts(newstock, myproduct){
 }
 
 function addProduct() {
+		console.log(' ');
+		console.log('------------------------------------------------------------------');
+		console.log('  BAMAZON: New Product Menu');
+		console.log('------------------------------------------------------------------');
 	inquirer.prompt([
   {
     type: "input",
@@ -237,18 +247,20 @@ function addProduct() {
     }
     newproduct = user.product;
     newprice = user.value;
-    console.log("==============================================");
-    // console.log(user);
     console.log("");
-    console.log("Name: " + newproduct);
-    console.log("The department id is "+newdepartpentid);
-    console.log("Price :$" + newprice);
-    // console.log(user.confirm);
+    console.log("==============================================");
+    console.log("  NEW PRODUCT ADDED!");
+    console.log("==============================================");
+    console.log("");
+    console.log("  Product Name: " + newproduct);
+    // console.log("  department id: "+ newdepartpentid);
+    console.log("  department id: "+ mydepartment);
+    console.log("  Price: $" + newprice);
     console.log("");
     console.log("==============================================");
 
+    insertProducts(newproduct, newdepartpentid, newprice);
     return viewMenuOptions();
-  // If the user does not confirm, then a message is provided and the program quits.
   }
   else {
     console.log("");
@@ -259,4 +271,16 @@ function addProduct() {
     return viewMenuOptions();
   }
 });
+}
+
+function insertProducts(newproduct, newdepartpentid, newprice){
+	connection.query("INSERT INTO products SET ?", {
+		product_name : newproduct,
+		department_id : newdepartpentid,
+		price : newprice,
+	  	stock_quantity : 5
+	  }, function(err, res) { 
+	  	if (err) return console.log(err);
+	  	// console.log('Update Stock Quantity completed!')
+	  });
 }
