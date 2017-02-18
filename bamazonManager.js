@@ -7,6 +7,10 @@ var currentstock;
 var myquantity;
 var newstock;
 
+var newproduct;
+var newdepartpentid;
+var newprice;
+
 var connection = mysql.createConnection({
   host     : 'localhost',
   user     : 'root',
@@ -37,7 +41,7 @@ function viewMenuOptions() {
             addMore();
             break;
         case "Add New Product":
-            lirisays();
+            addProduct();
             break;
         case "QUIT":
         	console.log("");
@@ -181,4 +185,78 @@ function updateProducts(newstock, myproduct){
 	  	if (err) return console.log(err);
 	  	// console.log('Update Stock Quantity completed!')
 	  });
+}
+
+function addProduct() {
+	inquirer.prompt([
+  {
+    type: "input",
+    message: "What is the name of new Product?",
+    name: "product"
+  },
+  {
+    type: "input",
+    message: "What is the Retail Value?",
+    name: "value"
+  },
+  {
+    type: "list",
+    message: "Which Department does the product belong to?",
+    choices: ["Anime", "Movies", "Video Games", "Comics", "Music"],
+    name: "newdepartment"
+  },
+  {
+    type: "confirm",
+    message: "Are you sure about adding this Product?",
+    name: "confirm",
+    default: true
+  }
+]).then(function(user) {
+
+  // console.log(user);
+  // console.log(JSON.stringify(user, null, 2));
+
+  if (user.confirm) {
+  	var mydepartment=user.newdepartment
+  	switch (mydepartment) {
+        case "Anime":
+            newdepartpentid=1;
+            break;
+        case "Movies":
+            newdepartpentid=2;
+            break;
+        case "Video Games":
+            newdepartpentid=3;
+            break;
+        case "Comics":
+            newdepartpentid=4;
+            break;
+         case "Music":
+            newdepartpentid=5;
+            break;
+    }
+    newproduct = user.product;
+    newprice = user.value;
+    console.log("==============================================");
+    // console.log(user);
+    console.log("");
+    console.log("Name: " + newproduct);
+    console.log("The department id is "+newdepartpentid);
+    console.log("Price :$" + newprice);
+    // console.log(user.confirm);
+    console.log("");
+    console.log("==============================================");
+
+    return viewMenuOptions();
+  // If the user does not confirm, then a message is provided and the program quits.
+  }
+  else {
+    console.log("");
+    console.log('=====================================================================');
+    console.log(" Back to Options");
+    console.log('=====================================================================');
+    console.log("");
+    return viewMenuOptions();
+  }
+});
 }
