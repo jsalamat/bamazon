@@ -18,5 +18,5 @@ Bamazon is an Amazon-like storefront using MySQL. The app will take in orders fr
 ## Feature:
 + Running this application will first display all of the items available for sale. Include the ids, names, and prices of products for sale.
 + Once the customer has placed the order, Bamazon should check if your store has enough of the product to meet the customer's request.
-+ updating the SQL database to reflect the remaining quantity.
++ Updating the SQL database to reflect the remaining quantity.
 + It show the customer the total cost of their purchase.
